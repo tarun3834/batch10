@@ -27,7 +27,7 @@ try{
         stage('Sonar check'){
             echo "scanning the app"
             tool name:'maven 3',type: 'maven'
-            sh 'mvn sonar:sonar -Dsonar.projectKey=sonar -Dsonar.login=admin -Dsonar.password=admin123 -Dsonar.host.url=http://35.223.42.73:9000'
+            sh 'mvn sonar:sonar -Dsonar.projectKey=sonar -Dsonar.login=admin -Dsonar.password=admin123 -Dsonar.host.url=http://34.136.82.119:9000'
         }            
               
         stage('Build Docker Image'){
@@ -45,12 +45,15 @@ try{
             echo "Installing desired software.."
             echo "Bring docker service up and running"
             echo "Deploying spring application"
-            //ansiblePlaybook credentialsId: 'ssh', disableHostKeyChecking: true, installation: 'ansible 2.9.22', inventory: '/etc/ansible/hosts', playbook: 'deploy-playbook.yml'
-            ansiblePlaybook credentialsId: 'private-key', disableHostKeyChecking: true, installation: 'ansible2.9.22', inventory: 'dev.inv', playbook: 'deploy-playbook.yml'
+            ansiblePlaybook credentialsId: 'private-key', disableHostKeyChecking: true, installation: 'ansible 2.9.22', inventory: '/etc/ansible/hosts', playbook: 'deploy-playbook.yml'
+           // ansiblePlaybook credentialsId: 'private-key', disableHostKeyChecking: true, installation: 'ansible2.9.22', inventory: 'dev.inv', playbook: 'deploy-playbook.yml'
         }
           stage('Clean up'){
             echo "Cleaning up the workspace..."
             cleanWs()
+        }
+        stage('Email test'){
+            emailext body: 'Hi Tarun, This is the first pipeline report.', subject: 'My first jenkins pipeline', to: 'tarunvani3834@gmail.com'
         }
     }
 }
