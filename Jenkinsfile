@@ -24,11 +24,15 @@ try{
             sh "${mavenCMD} clean package"
             //sh "java -jar target/my-test-app*.jar"
                                       }
-        stage('Sonar check'){
-            echo "scanning the app"
-            tool name:'maven 3',type: 'maven'
-            sh 'mvn sonar:sonar -Dsonar.projectKey=sonar -Dsonar.login=admin -Dsonar.password=admin123 -Dsonar.host.url=http://35.222.13.38:9000/'
-        }        
+        stage('Sonar Scan'){
+               echo "Scanning application for vulnerabilities using Sonar..."
+                sh "${mavenCMD} sonar:sonar -Dsonar.host.url=http://104.197.236.112:9000  -Dsonar.login=78d9adf9c3419f6ccc285a3a8faab74a04797e42"
+            }   
+           stage('Publish Report'){
+                echo " Publishing HTML report.."
+                publishHTML([allowMissing: false, alwaysLinkToLastBuild: false, keepAll: false, reportDir: '', reportFiles: 'index.html', reportName: 'HTML Report', reportTitles: ''])
+            
+            }         
               
         stage('Build Docker Image'){
             echo "Building docker image for springboot application."
@@ -63,5 +67,5 @@ catch(Exception err){
 finally{
        (currentBuild.result!= "ABORTED") && node("master") {
         echo "finally gets executed and end an email notification for every build"
-        }
+}
 }
